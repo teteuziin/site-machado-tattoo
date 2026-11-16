@@ -1,0 +1,20 @@
+name: Renomear para index
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  renomear:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Renomear landing-page para index.html
+        run: |
+          git config user.name "teteuziin"
+          git config user.email "teteuziin@users.noreply.github.com"
+          git mv landing-page-machado-tattoo.html index.html
+          git commit -m "Renomear landing-page-machado-tattoo.html para index.html"
+          git push

@@ -22,6 +22,11 @@
   --bone:#ece4d4; --bone-dim:#b9ae97; --muted:#a79b83;
   --ink-dim:#4c463a; --ink-mut:#5f5540;
   --red:#d92b2b; --red-dark:#9c1a1a;
+  /* variantes de contraste (WCAG AA): --red-hi é o vermelho de TEXTO sobre
+     fundo escuro (#d92b2b sobre preto = 4,08:1, abaixo de 4,5:1; o --red-hi
+     dá 7,25:1). --wa escurece o verde do WhatsApp: branco sobre #1faa55 era
+     3,03:1; sobre --wa é 5,42:1 e sobre --wa-dark, 8,13:1. */
+  --red-hi:#ff6f61; --wa:#0d7a3f; --wa-dark:#0a5c2e;
   --line:#2e2a23; --line-soft:#221e19;
   --fd:"Anton",Impact,sans-serif; --fb:"Archivo",system-ui,sans-serif;
   /* sistema rígido — só múltiplos de 8 */
@@ -52,18 +57,25 @@ section.tight{padding-top:var(--sp-64)}
 .js .intro{position:fixed;inset:0;z-index:10000;background:var(--bone);color:var(--ink);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer}
 .js .intro::before{content:"";position:absolute;inset:16px;border:3px solid var(--ink);pointer-events:none}
 .js .intro::after{content:"";position:absolute;inset:24px;border:1px solid rgba(11,10,9,.28);pointer-events:none}
-.intro-core{position:relative;text-align:center;padding:24px;z-index:2}
-.intro-word{font-family:var(--fd);font-size:clamp(56px,14vw,148px);line-height:1.02;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);opacity:0}
-.intro-word small{display:block;font-size:.34em;line-height:1.5;letter-spacing:.42em;color:var(--ink-dim);margin-top:16px}
-.intro.play .intro-word{animation:stampHit .5s cubic-bezier(.16,1.4,.3,1) .08s both}
-@keyframes stampHit{0%{opacity:0;transform:scale(2.1) rotate(-6deg)}55%{opacity:1;transform:scale(.96) rotate(.7deg)}72%{transform:scale(1.02) rotate(-.3deg) translate(1px,-1px)}84%{transform:scale(1) rotate(0) translate(-1px,1px)}100%{opacity:1;transform:scale(1)}}
+.intro-core{position:relative;text-align:center;padding:24px;max-width:100%;z-index:2}
+.intro-word{font-family:var(--fd);font-size:clamp(56px,14vw,148px);line-height:1.02;letter-spacing:.01em;text-transform:uppercase;color:var(--ink);opacity:0;max-width:100%}
+/* tracking moderado + text-indent igual ao tracking: a linha fica centrada
+   de verdade e não estoura nem corta em tela estreita (com .42em passava
+   da largura de um celular de 360px) */
+.intro-word small{display:block;font-size:.34em;line-height:1.5;letter-spacing:.3em;text-indent:.3em;color:var(--ink-dim);margin-top:16px;max-width:100%}
+@media(max-width:600px){ .intro-word small{font-size:.27em;letter-spacing:.16em;text-indent:.16em} }
+/* entrada profissional: UM movimento contínuo, sem rotação, sem solavancos
+   de ida e volta — o carimbo pousa e para */
+.intro.play .intro-word{animation:stampHit .45s cubic-bezier(.22,1,.36,1) .05s both}
+@keyframes stampHit{0%{opacity:0;transform:scale(1.05)}60%{opacity:1}100%{opacity:1;transform:scale(1)}}
 .intro-stripe{height:14px;background:var(--red);margin:24px auto 0;width:min(480px,78vw);transform:scaleX(0);transform-origin:0 50%;box-shadow:5px 5px 0 rgba(11,10,9,.9)}
-.intro.play .intro-stripe{animation:stripeSlash .38s cubic-bezier(.7,0,.2,1) .5s both}
+.intro.play .intro-stripe{animation:stripeSlash .35s cubic-bezier(.7,0,.2,1) .42s both}
 @keyframes stripeSlash{to{transform:scaleX(1)}}
-.intro-tag{margin-top:16px;font-size:11px;font-weight:800;letter-spacing:.38em;text-transform:uppercase;color:var(--ink-mut);opacity:0}
-.intro.play .intro-tag{animation:introFade .3s ease .68s both}
+.intro-tag{margin-top:16px;font-size:11px;font-weight:800;letter-spacing:.38em;text-indent:.38em;text-transform:uppercase;color:var(--ink-dim);opacity:0}
+.intro.play .intro-tag{animation:introFade .3s ease .58s both}
 @keyframes introFade{to{opacity:1}}
-body.intro-done .intro{animation:introOut .5s cubic-bezier(.7,0,.3,1) both}
+/* saída limpa: sobe reto, sem clique atravessando pro conteúdo durante a subida */
+body.intro-done .intro{animation:introOut .4s cubic-bezier(.7,0,.3,1) both;pointer-events:none}
 @keyframes introOut{to{transform:translateY(-101%);visibility:hidden}}
 @media (prefers-reduced-motion: reduce){ .js .intro{display:none!important} }
 
@@ -99,8 +111,8 @@ body.intro-done .intro{animation:introOut .5s cubic-bezier(.7,0,.3,1) both}
 .btn-red:hover{background:var(--red-dark)}
 .btn-bone{background:var(--bone);border-color:var(--ink);color:var(--ink)}
 .btn-bone:hover{background:#fff}
-.btn-wa{background:#1faa55;border-color:var(--ink);color:#fff}
-.btn-wa:hover{background:#178a44}
+.btn-wa{background:var(--wa);border-color:var(--ink);color:#fff}
+.btn-wa:hover{background:var(--wa-dark)}
 .on-bone .btn{border-color:var(--ink);color:var(--ink);box-shadow:6px 6px 0 rgba(11,10,9,.85)}
 .on-bone .btn:hover{box-shadow:8px 8px 0 rgba(11,10,9,.85)}
 .on-bone .btn-red{color:#fff}
@@ -110,7 +122,7 @@ body.intro-done .intro{animation:introOut .5s cubic-bezier(.7,0,.3,1) both}
 header{position:fixed;inset:0 0 auto 0;z-index:900;background:var(--ink);border-bottom:3px solid var(--red)}
 .header-in{display:flex;align-items:center;gap:24px;min-height:72px}
 .logo{font-family:var(--fd);font-size:22px;letter-spacing:.03em;text-transform:uppercase;text-decoration:none;line-height:1}
-.logo span{color:var(--red)}
+.logo span{color:var(--red-hi)}
 .logo small{display:block;font-family:var(--fb);font-size:9px;font-weight:800;letter-spacing:.34em;color:var(--muted);margin-top:4px}
 nav.main{margin-left:auto;display:flex;gap:8px}
 nav.main a{text-decoration:none;font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:12px;min-height:48px;display:inline-flex;align-items:center;color:var(--bone-dim);transition:color .15s}
@@ -131,7 +143,7 @@ header .btn{margin-left:16px;min-height:48px;padding:12px 20px;font-size:13px;bo
 .stamp{display:inline-block;border:2px solid currentColor;padding:8px 14px;font-size:12px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;line-height:1.35;max-width:100%}
 /* sem rotação: carimbo rotacionado invadia o espaço do vizinho em 390px */
 .stamp-rot{transform:none}
-.stamp-red{color:var(--red)}
+.stamp-red{color:var(--red-hi)}
 .hero-h{font-size:clamp(52px,13.8vw,184px);letter-spacing:.014em;line-height:1.1}
 .h-line{display:block}
 .outline-txt{color:var(--bone)}
@@ -172,7 +184,7 @@ header .btn{margin-left:16px;min-height:48px;padding:12px 20px;font-size:13px;bo
 /* ---------- cabeçalhos de seção — ritmo único: carimbo 16 / título / texto 16 / ação 32 ---------- */
 .sec-head{max-width:760px;margin-bottom:48px;position:relative;z-index:2}
 .sec-head.flush{margin-bottom:0}
-.sec-head .kick{display:inline-block;border:2px solid var(--red);color:var(--red);padding:6px 12px;font-size:12px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;margin:0 0 16px}
+.sec-head .kick{display:inline-block;border:2px solid var(--red);color:var(--red-hi);padding:6px 12px;font-size:12px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;margin:0 0 16px}
 .on-bone .sec-head .kick{color:var(--red-dark);border-color:var(--red-dark)}
 .sec-head h2{font-size:clamp(38px,5.2vw,64px)}
 .sec-head p{color:var(--bone-dim);margin:16px 0 0;font-size:17px;max-width:38em}
@@ -211,7 +223,7 @@ header .btn{margin-left:16px;min-height:48px;padding:12px 20px;font-size:13px;bo
 .pcard .pc-vtag{font-style:normal;background:var(--red);color:#fff;font-family:var(--fb);font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 9px}
 .pcard .pc-info strong{font-size:15px;line-height:1.3;display:block;margin-top:2px}
 .pcard .pc-info small{color:#cfc4ae;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;display:block}
-.port-count{margin-top:24px;color:var(--ink-mut);font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;position:relative;z-index:2}
+.port-count{margin-top:24px;color:var(--ink-dim);font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;position:relative;z-index:2}
 
 /* ---------- fresca × cicatrizada: slider arrastável ---------- */
 .split-sec{background:var(--coal);border-block:3px solid var(--line)}
@@ -230,7 +242,7 @@ header .btn{margin-left:16px;min-height:48px;padding:12px 20px;font-size:13px;bo
 .ba-handle:focus-visible{outline:3px solid var(--bone);outline-offset:3px}
 .ba-handle:active{transform:translate(-50%,-50%) scale(.93)}
 .big-quote{font-size:clamp(21px,2.6vw,27px);line-height:1.45;font-weight:600;margin:24px 0 0}
-.big-quote b{color:var(--red)}
+.big-quote b{color:var(--red-hi)}
 .split p.body{color:var(--bone-dim);margin-top:16px}
 .chip-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px}
 .chip-row span{border:2px solid var(--line);padding:9px 14px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
@@ -268,7 +280,7 @@ header .btn{margin-left:16px;min-height:48px;padding:12px 20px;font-size:13px;bo
 .depo{max-width:880px;position:relative;z-index:2}
 .depo .stamp{color:#fff;margin-bottom:24px}
 .depo blockquote{font-size:clamp(25px,3.8vw,40px);line-height:1.35;font-weight:700;margin:0}
-.depo figcaption{color:rgba(255,255,255,.85);font-size:15px;margin-top:24px}
+.depo figcaption{color:#fff;font-size:15px;margin-top:24px}
 .depo figcaption b{color:#fff}
 .depo .btn{margin-top:32px;border-color:#fff;color:#fff;box-shadow:6px 6px 0 rgba(0,0,0,.45)}
 .depo .btn:hover{background:#fff;color:var(--red-dark)}
@@ -281,10 +293,13 @@ header .btn{margin-left:16px;min-height:48px;padding:12px 20px;font-size:13px;bo
 @media(max-width:480px){.form-card,.resumo-card{padding:24px 16px}}
 .field{margin-bottom:24px}
 .field label{display:block;font-weight:800;font-size:14px;margin-bottom:8px}
-.field label small{color:var(--ink-mut);font-weight:600}
+.field label small{color:var(--ink-dim);font-weight:600}
 .field input[type=text],.field textarea,.field select{width:100%;background:#fff;border:2px solid var(--ink);border-radius:0;color:var(--ink);font-family:var(--fb);font-size:15.5px;padding:13px 14px;min-height:50px}
 .field textarea{min-height:96px;resize:vertical}
 .field input:focus,.field textarea:focus,.field select:focus{outline:3px solid var(--red);outline-offset:1px}
+/* placeholder com cor definida e opacidade cheia: o padrão do navegador
+   varia e pode ficar claro demais sobre o campo branco (aqui: 7,34:1) */
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-mut);opacity:1}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips label{margin:0}
 .chips input{position:absolute;opacity:0;pointer-events:none}
@@ -341,7 +356,7 @@ footer{border-top:3px solid var(--red);padding:64px 0 40px;background:#080706;ov
 .foot-bottom{margin-top:32px;padding-top:24px;border-top:1px solid var(--line-soft);color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
 
 /* ---------- flutuante ---------- */
-.wa-float{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:950;width:56px;height:56px;background:#1faa55;border:2px solid var(--ink);box-shadow:5px 5px 0 rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;transition:transform .12s ease-out,box-shadow .12s ease-out}
+.wa-float{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:950;width:56px;height:56px;background:var(--wa);border:2px solid var(--ink);box-shadow:5px 5px 0 rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;transition:transform .12s ease-out,box-shadow .12s ease-out}
 .wa-float:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 rgba(0,0,0,.55)}
 .wa-float:active{transform:translate(3px,3px);box-shadow:0 0 0 rgba(0,0,0,.55)}
 .wa-float svg{width:29px;height:29px;fill:#fff}
@@ -376,7 +391,7 @@ footer{border-top:3px solid var(--red);padding:64px 0 40px;background:#080706;ov
 /* som: aviso curto sob os vídeos com som */
 .sound-note{display:flex;align-items:center;gap:8px;margin-top:16px;color:var(--muted);font-size:14px;font-weight:700}
 .sound-note b{color:var(--bone);border:2px solid var(--line);padding:4px 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;flex:none}
-.on-bone .sound-note{color:var(--ink-mut)} .on-bone .sound-note b{color:var(--ink);border-color:var(--ink)}
+.on-bone .sound-note{color:var(--ink-dim)} .on-bone .sound-note b{color:var(--ink);border-color:var(--ink)}
 
 /* ---------- movimento reduzido ---------- */
 @media (prefers-reduced-motion: reduce){
@@ -753,10 +768,14 @@ footer{border-top:3px solid var(--red);padding:64px 0 40px;background:#080706;ov
         document.body.classList.add("intro-done");
         document.body.style.overflow = "";
         playHero();
-        setTimeout(function(){ intro.style.display = "none"; }, 560);
+        setTimeout(function(){ intro.style.display = "none"; }, 460);
       };
-      var introTimer = setTimeout(endIntro, 1250);
+      /* ciclo total: entrada completa aos ~0,9s, saída começa em 1,05s e
+         termina em ~1,45s — sempre abaixo de 1,5s. Pula no clique/toque
+         (listener no overlay) e também no Esc. */
+      var introTimer = setTimeout(endIntro, 1050);
       intro.addEventListener("click", function(){ clearTimeout(introTimer); endIntro(); });
+      document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !introDone){ clearTimeout(introTimer); endIntro(); } });
       setTimeout(function(){ if(!introDone){ clearTimeout(introTimer); endIntro(); } }, 1500);
     }
   }
